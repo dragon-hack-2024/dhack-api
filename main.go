@@ -3,6 +3,7 @@ package main
 import (
 	"dhack-api/api"
 	"dhack-api/config"
+	"dhack-api/db"
 	"log"
 )
 
@@ -14,8 +15,15 @@ func main() {
 		log.Fatal("Failed to load config: ", err)
 	}
 
+	// Connect to the database.
+	store, err := db.Connect(config.DBSource)
+	if err != nil {
+		log.Fatal("Failed to connect to DB: ", err)
+	}
+	defer store.Close()
+
 	// Create a server and setup routes.
-	server, err := api.NewServer(config)
+	server, err := api.NewServer(config, store)
 	if err != nil {
 		log.Fatal("Failed to create a server: ", err)
 	}
