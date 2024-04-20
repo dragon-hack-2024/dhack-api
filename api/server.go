@@ -30,6 +30,18 @@ func NewServer(config *config.Config, store *db.Store) (*Server, error) {
 		v1.POST("/users", server.CreateUser)
 		v1.PUT("/users/:id", server.UpdateUser)
 		v1.DELETE("/users/:id", server.DeleteUser)
+
+		v1.GET("/challenges/:id", server.GetChallengeByID)
+		v1.GET("/challenges", server.GetChallengeList)
+		v1.POST("/challenges", server.CreateChallenge)
+		v1.PUT("/challenges/:id", server.UpdateChallenge)
+		v1.DELETE("/challenges/:id", server.DeleteChallenge)
+
+		v1.GET("/stats/:id", server.GetStatByID)
+		v1.GET("/stats", server.GetStatList)
+		v1.POST("/stats", server.CreateStat)
+		v1.PUT("/stats/:id", server.UpdateStat)
+		v1.DELETE("/stats/:id", server.DeleteStat)
 	}
 
 	// Setup health check routes.
