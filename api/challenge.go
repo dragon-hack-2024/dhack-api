@@ -71,8 +71,13 @@ func (server *Server) GetChallengeList(ctx *gin.Context) {
 		return
 	}
 
+	arg := model.ListChallengesParams{
+		Offset: req.Offset,
+		Limit:  req.Limit,
+	}
+
 	// Execute query.
-	result, err := server.store.Queries.ListChallenges(ctx)
+	result, err := server.store.Queries.ListChallenges(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()

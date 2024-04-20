@@ -14,6 +14,7 @@ type getStatRequest struct {
 type getStatListRequest struct {
 	Offset int32 `form:"offset"`
 	Limit  int32 `form:"limit" binding:"required,min=1,max=20"`
+	UserID int32 `form:"user_id" binding:"required`
 }
 
 type createStatRequest struct {
@@ -55,7 +56,7 @@ func (server *Server) GetStatByID(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 }
 
-func (server *Server) GetStatList(ctx *gin.Context) {
+func (server *Server) GetStatListByUser(ctx *gin.Context) {
 
 	// Check if request has parameters offset and limit for pagination.
 	var req getStatListRequest
@@ -65,8 +66,14 @@ func (server *Server) GetStatList(ctx *gin.Context) {
 		return
 	}
 
+	arg := model.ListStatsByUserParams{
+		Offset: req.Offset,
+		Limit:  req.Limit,
+		UserID: req.UserID,
+	}
+
 	// Execute query.
-	result, err := server.store.Queries.ListStats(ctx)
+	result, err := server.store.Queries.ListStatsByUser(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()

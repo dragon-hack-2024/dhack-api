@@ -32,6 +32,7 @@ type User struct {
 	Name      string           `json:"name"`
 	Email     string           `json:"email"`
 	Weight    int16            `json:"weight"`
+	Height    int16            `json:"height"`
 	BirthDate pgtype.Date      `json:"birth_date"`
 	CreatedAt pgtype.Timestamp `json:"created_at"`
 }

@@ -23,6 +23,7 @@ type createUserRequest struct {
 	Name      string          `json:"name" binding:"required"`
 	Email     string          `json:"email" binding:"required"`
 	Weight    int16           `json:"weight" binding:"required"`
+	Height    int16           `json:"height" binding:"required"`
 	BirthDate util.CustomTime `json:"birth_date" binding:"required"`
 }
 
@@ -30,6 +31,7 @@ type updateUserRequest struct {
 	Name      string          `json:"name" binding:"required"`
 	Email     string          `json:"email" binding:"required"`
 	Weight    int16           `json:"weight" binding:"required"`
+	Height    int16           `json:"height" binding:"required"`
 	BirthDate util.CustomTime `json:"birth_date" binding:"required"`
 }
 
@@ -64,8 +66,13 @@ func (server *Server) GetUserList(ctx *gin.Context) {
 		return
 	}
 
+	arg := model.ListUsersParams{
+		Offset: req.Offset,
+		Limit:  req.Limit,
+	}
+
 	// Execute query.
-	result, err := server.store.Queries.ListUsers(ctx)
+	result, err := server.store.Queries.ListUsers(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
@@ -89,6 +96,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 		Name:      req.Name,
 		Email:     req.Email,
 		Weight:    req.Weight,
+		Height:    req.Height,
 		BirthDate: pgtype.Date{Time: time.Time(req.BirthDate), Valid: true},
 	}
 
@@ -125,6 +133,7 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 		Name:      req.Name,
 		Email:     req.Email,
 		Weight:    req.Weight,
+		Height:    req.Height,
 		BirthDate: pgtype.Date{Time: time.Time(req.BirthDate), Valid: true},
 		ID:        reqID.ID,
 	}

@@ -86,16 +86,17 @@ func (q *Queries) CreateStat(ctx context.Context, arg CreateStatParams) (Stat, e
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  name, email, weight, birth_date
+  name, email, weight, height, birth_date
 ) VALUES (
-  $1, $2, $3, $4
-) RETURNING id, name, email, weight, birth_date, created_at
+  $1, $2, $3, $4, $5
+) RETURNING id, name, email, weight, height, birth_date, created_at
 `
 
 type CreateUserParams struct {
 	Name      string      `json:"name"`
 	Email     string      `json:"email"`
 	Weight    int16       `json:"weight"`
+	Height    int16       `json:"height"`
 	BirthDate pgtype.Date `json:"birth_date"`
 }
 
@@ -104,6 +105,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		arg.Name,
 		arg.Email,
 		arg.Weight,
+		arg.Height,
 		arg.BirthDate,
 	)
 	var i User
@@ -112,6 +114,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 		&i.Name,
 		&i.Email,
 		&i.Weight,
+		&i.Height,
 		&i.BirthDate,
 		&i.CreatedAt,
 	)
@@ -192,7 +195,7 @@ func (q *Queries) GetStat(ctx context.Context, id int32) (Stat, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, name, email, weight, birth_date, created_at FROM users
+SELECT id, name, email, weight, height, birth_date, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -204,6 +207,7 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 		&i.Name,
 		&i.Email,
 		&i.Weight,
+		&i.Height,
 		&i.BirthDate,
 		&i.CreatedAt,
 	)
@@ -249,10 +253,17 @@ func (q *Queries) GetWeekyProgress(ctx context.Context, userID int32) ([]GetWeek
 const listChallenges = `-- name: ListChallenges :many
 SELECT id, name, steps, file_name, duration FROM challenges
 ORDER BY name
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListChallenges(ctx context.Context) ([]Challenge, error) {
-	rows, err := q.db.Query(ctx, listChallenges)
+type ListChallengesParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListChallenges(ctx context.Context, arg ListChallengesParams) ([]Challenge, error) {
+	rows, err := q.db.Query(ctx, listChallenges, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -280,10 +291,60 @@ func (q *Queries) ListChallenges(ctx context.Context) ([]Challenge, error) {
 const listStats = `-- name: ListStats :many
 SELECT id, calories_burned, rpm, duration, score, created_at, challenge_id, user_id FROM stats
 ORDER BY score
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListStats(ctx context.Context) ([]Stat, error) {
-	rows, err := q.db.Query(ctx, listStats)
+type ListStatsParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListStats(ctx context.Context, arg ListStatsParams) ([]Stat, error) {
+	rows, err := q.db.Query(ctx, listStats, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Stat
+	for rows.Next() {
+		var i Stat
+		if err := rows.Scan(
+			&i.ID,
+			&i.CaloriesBurned,
+			&i.Rpm,
+			&i.Duration,
+			&i.Score,
+			&i.CreatedAt,
+			&i.ChallengeID,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listStatsByUser = `-- name: ListStatsByUser :many
+SELECT id, calories_burned, rpm, duration, score, created_at, challenge_id, user_id FROM stats
+WHERE user_id = $1
+ORDER BY created_at DESC
+LIMIT $2
+OFFSET $3
+`
+
+type ListStatsByUserParams struct {
+	UserID int32 `json:"user_id"`
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListStatsByUser(ctx context.Context, arg ListStatsByUserParams) ([]Stat, error) {
+	rows, err := q.db.Query(ctx, listStatsByUser, arg.UserID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -312,12 +373,19 @@ func (q *Queries) ListStats(ctx context.Context) ([]Stat, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, name, email, weight, birth_date, created_at FROM users
+SELECT id, name, email, weight, height, birth_date, created_at FROM users
 ORDER BY name
+LIMIT $1
+OFFSET $2
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
-	rows, err := q.db.Query(ctx, listUsers)
+type ListUsersParams struct {
+	Limit  int32 `json:"limit"`
+	Offset int32 `json:"offset"`
+}
+
+func (q *Queries) ListUsers(ctx context.Context, arg ListUsersParams) ([]User, error) {
+	rows, err := q.db.Query(ctx, listUsers, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
@@ -330,6 +398,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 			&i.Name,
 			&i.Email,
 			&i.Weight,
+			&i.Height,
 			&i.BirthDate,
 			&i.CreatedAt,
 		); err != nil {
@@ -420,15 +489,16 @@ func (q *Queries) UpdateStat(ctx context.Context, arg UpdateStatParams) (Stat, e
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
-SET name = $1, email = $2, weight = $3, birth_date = $4
-WHERE id = $5
-RETURNING id, name, email, weight, birth_date, created_at
+SET name = $1, email = $2, weight = $3, height = $4, birth_date = $5
+WHERE id = $6
+RETURNING id, name, email, weight, height, birth_date, created_at
 `
 
 type UpdateUserParams struct {
 	Name      string      `json:"name"`
 	Email     string      `json:"email"`
 	Weight    int16       `json:"weight"`
+	Height    int16       `json:"height"`
 	BirthDate pgtype.Date `json:"birth_date"`
 	ID        int32       `json:"id"`
 }
@@ -438,6 +508,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		arg.Name,
 		arg.Email,
 		arg.Weight,
+		arg.Height,
 		arg.BirthDate,
 		arg.ID,
 	)
@@ -447,6 +518,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 		&i.Name,
 		&i.Email,
 		&i.Weight,
+		&i.Height,
 		&i.BirthDate,
 		&i.CreatedAt,
 	)

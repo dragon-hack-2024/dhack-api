@@ -45,7 +45,7 @@ func NewServer(config *config.Config, store *db.Store) (*Server, error) {
 		v1.DELETE("/challenges/:id", server.DeleteChallenge)
 
 		v1.GET("/stats/:id", server.GetStatByID)
-		v1.GET("/stats", server.GetStatList)
+		v1.GET("/stats", server.GetStatListByUser)
 		v1.POST("/stats", server.CreateStat)
 		v1.PUT("/stats/:id", server.UpdateStat)
 		v1.DELETE("/stats/:id", server.DeleteStat)

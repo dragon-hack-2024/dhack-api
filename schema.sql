@@ -3,6 +3,7 @@ CREATE TABLE users (
   name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL, 
   weight SMALLINT NOT NULL,
+  height SMALLINT NOT NULL,
   birth_date DATE NOT NULL, 
   created_at TIMESTAMP NOT NULL DEFAULT(now())
 );

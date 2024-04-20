@@ -4,19 +4,21 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users
-ORDER BY name;
+ORDER BY name
+LIMIT $1
+OFFSET $2;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  name, email, weight, birth_date
+  name, email, weight, height, birth_date
 ) VALUES (
-  $1, $2, $3, $4
+  $1, $2, $3, $4, $5
 ) RETURNING *;
 
 -- name: UpdateUser :one
 UPDATE users
-SET name = $1, email = $2, weight = $3, birth_date = $4
-WHERE id = $5
+SET name = $1, email = $2, weight = $3, height = $4, birth_date = $5
+WHERE id = $6
 RETURNING *;
 
 -- name: DeleteUser :exec
@@ -31,7 +33,9 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListChallenges :many
 SELECT * FROM challenges
-ORDER BY name;
+ORDER BY name
+LIMIT $1
+OFFSET $2;
 
 -- name: CreateChallenge :one
 INSERT INTO challenges (
@@ -58,7 +62,9 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListStats :many
 SELECT * FROM stats
-ORDER BY score;
+ORDER BY score
+LIMIT $1
+OFFSET $2;
 
 -- name: CreateStat :one
 INSERT INTO stats (
@@ -86,3 +92,10 @@ WHERE created_at >= now() - INTERVAL '7 days'
   AND user_id = $1
 GROUP BY date
 ORDER BY date;
+
+-- name: ListStatsByUser :many
+SELECT * FROM stats
+WHERE user_id = $1
+ORDER BY created_at DESC
+LIMIT $2
+OFFSET $3;
