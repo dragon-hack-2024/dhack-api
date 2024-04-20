@@ -3,6 +3,7 @@ module dhack-api
 go 1.21.6
 
 require (
+	github.com/gin-contrib/cors v1.7.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/spf13/viper v1.18.2

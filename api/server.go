@@ -4,6 +4,7 @@ import (
 	"dhack-api/config"
 	"dhack-api/db"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -16,6 +17,12 @@ type Server struct {
 func NewServer(config *config.Config, store *db.Store) (*Server, error) {
 	gin.SetMode(config.GinMode)
 	router := gin.Default()
+
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders: []string{"Origin", "Content-Type", "Accept", "Authorization"},
+	}))
 
 	server := &Server{
 		store:  store,
