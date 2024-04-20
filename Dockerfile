@@ -8,6 +8,9 @@ RUN go build -o main main.go
 FROM alpine:latest
 WORKDIR /app
 COPY --from=builder /app/main .
+COPY app.env .
+COPY wait-for.sh .
+RUN chmod +x ./wait-for.sh
 
 EXPOSE 8080
 CMD [ "/app/main" ]
