@@ -38,7 +38,7 @@ func (server *Server) GetUserByID(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var req getUserRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -46,7 +46,7 @@ func (server *Server) GetUserByID(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.GetUser(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -59,7 +59,7 @@ func (server *Server) GetUserList(ctx *gin.Context) {
 	// Check if request has parameters offset and limit for pagination.
 	var req getUserListRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -67,7 +67,7 @@ func (server *Server) GetUserList(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.ListUsers(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -80,7 +80,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 	// Check if request has all required fields in JSON body.
 	var req createUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -95,7 +95,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.CreateUser(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -108,7 +108,7 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var reqID getUserRequest
 	if err := ctx.ShouldBindUri(&reqID); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -116,7 +116,7 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 	// Check if request has all required fields in JSON body.
 	var req updateUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -132,7 +132,7 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.UpdateUser(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -145,7 +145,7 @@ func (server *Server) DeleteUser(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var req getUserRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -153,7 +153,7 @@ func (server *Server) DeleteUser(ctx *gin.Context) {
 	// Execute query.
 	err := server.store.Queries.DeleteUser(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}

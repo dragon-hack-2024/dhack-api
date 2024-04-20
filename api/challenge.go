@@ -45,7 +45,7 @@ func (server *Server) GetChallengeByID(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var req getChallengeRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -53,7 +53,7 @@ func (server *Server) GetChallengeByID(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.GetChallenge(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -66,7 +66,7 @@ func (server *Server) GetChallengeList(ctx *gin.Context) {
 	// Check if request has parameters offset and limit for pagination.
 	var req getChallengeListRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -74,7 +74,7 @@ func (server *Server) GetChallengeList(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.ListChallenges(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -99,7 +99,7 @@ func (server *Server) CreateChallenge(ctx *gin.Context) {
 	var req createChallengeRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		log.Println("We have an error: ", err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -114,7 +114,7 @@ func (server *Server) CreateChallenge(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.CreateChallenge(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -135,7 +135,7 @@ func (server *Server) UpdateChallenge(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var reqID getChallengeRequest
 	if err := ctx.ShouldBindUri(&reqID); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -143,7 +143,7 @@ func (server *Server) UpdateChallenge(ctx *gin.Context) {
 	// Check if request has all required fields in JSON body.
 	var req updateChallengeRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -158,7 +158,7 @@ func (server *Server) UpdateChallenge(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.UpdateChallenge(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -179,7 +179,7 @@ func (server *Server) DeleteChallenge(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var req getChallengeRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -187,7 +187,7 @@ func (server *Server) DeleteChallenge(ctx *gin.Context) {
 	// Execute query.
 	err := server.store.Queries.DeleteChallenge(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}

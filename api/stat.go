@@ -39,7 +39,7 @@ func (server *Server) GetStatByID(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var req getStatRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -47,7 +47,7 @@ func (server *Server) GetStatByID(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.GetStat(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -60,7 +60,7 @@ func (server *Server) GetStatList(ctx *gin.Context) {
 	// Check if request has parameters offset and limit for pagination.
 	var req getStatListRequest
 	if err := ctx.ShouldBindQuery(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -68,7 +68,7 @@ func (server *Server) GetStatList(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.ListStats(ctx)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -81,7 +81,7 @@ func (server *Server) CreateStat(ctx *gin.Context) {
 	// Check if request has all required fields in JSON body.
 	var req createStatRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -98,7 +98,7 @@ func (server *Server) CreateStat(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.CreateStat(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -111,7 +111,7 @@ func (server *Server) UpdateStat(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var reqID getStatRequest
 	if err := ctx.ShouldBindUri(&reqID); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -119,7 +119,7 @@ func (server *Server) UpdateStat(ctx *gin.Context) {
 	// Check if request has all required fields in JSON body.
 	var req updateStatRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -136,7 +136,7 @@ func (server *Server) UpdateStat(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.UpdateStat(ctx, arg)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -149,7 +149,7 @@ func (server *Server) DeleteStat(ctx *gin.Context) {
 	// Check if request has ID field in URI.
 	var req getStatRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -157,7 +157,7 @@ func (server *Server) DeleteStat(ctx *gin.Context) {
 	// Execute query.
 	err := server.store.Queries.DeleteStat(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -169,7 +169,7 @@ func (server *Server) GetWeeklyProgress(ctx *gin.Context) {
 
 	var req getStatRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
@@ -177,7 +177,7 @@ func (server *Server) GetWeeklyProgress(ctx *gin.Context) {
 	// Execute query.
 	result, err := server.store.Queries.GetWeekyProgress(ctx, req.ID)
 	if err != nil {
-		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
 		return
 	}
