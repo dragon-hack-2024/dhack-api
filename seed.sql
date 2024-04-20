@@ -1,14 +1,14 @@
 -- Insert a user
-INSERT INTO users (name, email, weight, birth_date) 
-VALUES ('Johnny', 'johnny@example.com', 75, '2001-09-11');
+INSERT INTO users (name, email, weight, height, birth_date) 
+VALUES ('Johnny', 'johnny@example.com', 75, 180, '2001-09-11');
 
 -- Insert challenges
 INSERT INTO challenges (name, steps, file_name, duration) 
 VALUES 
-  ('Beginner Challenge', '{"steps":[{"bpm":80,"time":10},{"bpm":100,"time":20}]}', 'beginner.mp3', 65),
-  ('Marathon', '{"steps":[{"bpm":80,"time":15},{"bpm":100,"time":25}]}', 'intermediate.mp3', 320),
-  ('Beat Challenge', '{"steps":[{"bpm":120,"time":20},{"bpm":140,"time":30}]}', 'advanced.mp3', 45),
-  ('Expert Challenge', '{"steps":[{"bpm":140,"time":25},{"bpm":160,"time":35}]}', 'expert.mp3', 125);
+  ('Beginner Challenge', '[{"bpm":60,"time":10},{"bpm":75,"time":20}]', 'beginner.mp3', 65),
+  ('Marathon', '[{"bpm":80,"time":15},{"bpm":100,"time":25}]', 'intermediate.mp3', 320),
+  ('Beat Challenge', '[{"bpm":120,"time":20},{"bpm":140,"time":30}]', 'advanced.mp3', 45),
+  ('Expert Challenge', '[{"bpm":140,"time":25},{"bpm":160,"time":35}]', 'expert.mp3', 125);
 
 -- Insert stats for past week with hard-coded values and day subtraction
 INSERT INTO stats (calories_burned, rpm, duration, score, created_at, challenge_id, user_id)
