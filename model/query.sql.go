@@ -210,6 +210,42 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	return i, err
 }
 
+const getWeekyProgress = `-- name: GetWeekyProgress :many
+SELECT 
+  CAST(created_at AS DATE) AS date,
+  CAST(SUM(rpm * (duration / 60.0)) AS INTEGER) AS total_skips
+FROM stats 
+WHERE created_at >= now() - INTERVAL '7 days'
+  AND user_id = $1
+GROUP BY date
+ORDER BY date
+`
+
+type GetWeekyProgressRow struct {
+	Date       pgtype.Date `json:"date"`
+	TotalSkips int32       `json:"total_skips"`
+}
+
+func (q *Queries) GetWeekyProgress(ctx context.Context, userID int32) ([]GetWeekyProgressRow, error) {
+	rows, err := q.db.Query(ctx, getWeekyProgress, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetWeekyProgressRow
+	for rows.Next() {
+		var i GetWeekyProgressRow
+		if err := rows.Scan(&i.Date, &i.TotalSkips); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listChallenges = `-- name: ListChallenges :many
 SELECT id, name, steps, file_name, duration FROM challenges
 ORDER BY name

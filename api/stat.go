@@ -164,3 +164,23 @@ func (server *Server) DeleteStat(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusNoContent, nil)
 }
+
+func (server *Server) GetWeeklyProgress(ctx *gin.Context) {
+
+	var req getStatRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err})
+		ctx.Abort()
+		return
+	}
+
+	// Execute query.
+	result, err := server.store.Queries.GetWeekyProgress(ctx, req.ID)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, result)
+}

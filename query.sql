@@ -76,3 +76,13 @@ RETURNING *;
 -- name: DeleteStat :exec
 DELETE FROM stats
 WHERE id = $1;
+
+-- name: GetWeekyProgress :many
+SELECT 
+  CAST(created_at AS DATE) AS date,
+  CAST(SUM(rpm * (duration / 60.0)) AS INTEGER) AS total_skips
+FROM stats 
+WHERE created_at >= now() - INTERVAL '7 days'
+  AND user_id = $1
+GROUP BY date
+ORDER BY date;
