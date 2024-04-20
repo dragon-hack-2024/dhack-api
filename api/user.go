@@ -20,12 +20,14 @@ type getUserListRequest struct {
 }
 
 type createUserRequest struct {
+	Name      string          `json:"name" binding:"required"`
 	Email     string          `json:"email" binding:"required"`
 	Weight    int16           `json:"weight" binding:"required"`
 	BirthDate util.CustomTime `json:"birth_date" binding:"required"`
 }
 
 type updateUserRequest struct {
+	Name      string          `json:"name" binding:"required"`
 	Email     string          `json:"email" binding:"required"`
 	Weight    int16           `json:"weight" binding:"required"`
 	BirthDate util.CustomTime `json:"birth_date" binding:"required"`
@@ -84,6 +86,7 @@ func (server *Server) CreateUser(ctx *gin.Context) {
 	}
 
 	arg := model.CreateUserParams{
+		Name:      req.Name,
 		Email:     req.Email,
 		Weight:    req.Weight,
 		BirthDate: pgtype.Date{Time: time.Time(req.BirthDate), Valid: true},
@@ -119,6 +122,7 @@ func (server *Server) UpdateUser(ctx *gin.Context) {
 	}
 
 	arg := model.UpdateUserParams{
+		Name:      req.Name,
 		Email:     req.Email,
 		Weight:    req.Weight,
 		BirthDate: pgtype.Date{Time: time.Time(req.BirthDate), Valid: true},

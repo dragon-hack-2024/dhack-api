@@ -29,6 +29,7 @@ type Stat struct {
 
 type User struct {
 	ID        int32            `json:"id"`
+	Name      string           `json:"name"`
 	Email     string           `json:"email"`
 	Weight    int16            `json:"weight"`
 	BirthDate pgtype.Date      `json:"birth_date"`

@@ -1,5 +1,6 @@
 CREATE TABLE users (
   id SERIAL PRIMARY KEY, 
+  name VARCHAR(255) NOT NULL,
   email VARCHAR(255) NOT NULL, 
   weight SMALLINT NOT NULL,
   birth_date DATE NOT NULL, 

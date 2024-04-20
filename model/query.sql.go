@@ -86,23 +86,30 @@ func (q *Queries) CreateStat(ctx context.Context, arg CreateStatParams) (Stat, e
 
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (
-  email, weight, birth_date
+  name, email, weight, birth_date
 ) VALUES (
-  $1, $2, $3
-) RETURNING id, email, weight, birth_date, created_at
+  $1, $2, $3, $4
+) RETURNING id, name, email, weight, birth_date, created_at
 `
 
 type CreateUserParams struct {
+	Name      string      `json:"name"`
 	Email     string      `json:"email"`
 	Weight    int16       `json:"weight"`
 	BirthDate pgtype.Date `json:"birth_date"`
 }
 
 func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
-	row := q.db.QueryRow(ctx, createUser, arg.Email, arg.Weight, arg.BirthDate)
+	row := q.db.QueryRow(ctx, createUser,
+		arg.Name,
+		arg.Email,
+		arg.Weight,
+		arg.BirthDate,
+	)
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
 		&i.Weight,
 		&i.BirthDate,
@@ -185,7 +192,7 @@ func (q *Queries) GetStat(ctx context.Context, id int32) (Stat, error) {
 }
 
 const getUser = `-- name: GetUser :one
-SELECT id, email, weight, birth_date, created_at FROM users
+SELECT id, name, email, weight, birth_date, created_at FROM users
 WHERE id = $1 LIMIT 1
 `
 
@@ -194,6 +201,7 @@ func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
 		&i.Weight,
 		&i.BirthDate,
@@ -268,8 +276,8 @@ func (q *Queries) ListStats(ctx context.Context) ([]Stat, error) {
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, weight, birth_date, created_at FROM users
-ORDER BY email
+SELECT id, name, email, weight, birth_date, created_at FROM users
+ORDER BY name
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
@@ -283,6 +291,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]User, error) {
 		var i User
 		if err := rows.Scan(
 			&i.ID,
+			&i.Name,
 			&i.Email,
 			&i.Weight,
 			&i.BirthDate,
@@ -375,12 +384,13 @@ func (q *Queries) UpdateStat(ctx context.Context, arg UpdateStatParams) (Stat, e
 
 const updateUser = `-- name: UpdateUser :one
 UPDATE users
-SET email = $1, weight = $2, birth_date = $3
-WHERE id = $4
-RETURNING id, email, weight, birth_date, created_at
+SET name = $1, email = $2, weight = $3, birth_date = $4
+WHERE id = $5
+RETURNING id, name, email, weight, birth_date, created_at
 `
 
 type UpdateUserParams struct {
+	Name      string      `json:"name"`
 	Email     string      `json:"email"`
 	Weight    int16       `json:"weight"`
 	BirthDate pgtype.Date `json:"birth_date"`
@@ -389,6 +399,7 @@ type UpdateUserParams struct {
 
 func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, error) {
 	row := q.db.QueryRow(ctx, updateUser,
+		arg.Name,
 		arg.Email,
 		arg.Weight,
 		arg.BirthDate,
@@ -397,6 +408,7 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (User, e
 	var i User
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
 		&i.Weight,
 		&i.BirthDate,

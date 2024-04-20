@@ -4,19 +4,19 @@ WHERE id = $1 LIMIT 1;
 
 -- name: ListUsers :many
 SELECT * FROM users
-ORDER BY email;
+ORDER BY name;
 
 -- name: CreateUser :one
 INSERT INTO users (
-  email, weight, birth_date
+  name, email, weight, birth_date
 ) VALUES (
-  $1, $2, $3
+  $1, $2, $3, $4
 ) RETURNING *;
 
 -- name: UpdateUser :one
 UPDATE users
-SET email = $1, weight = $2, birth_date = $3
-WHERE id = $4
+SET name = $1, email = $2, weight = $3, birth_date = $4
+WHERE id = $5
 RETURNING *;
 
 -- name: DeleteUser :exec
