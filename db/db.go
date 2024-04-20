@@ -5,16 +5,16 @@ import (
 	"dhack-api/model"
 	"log"
 
-	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Store struct {
-	conn    *pgx.Conn
+	conn    *pgxpool.Pool
 	Queries *model.Queries
 }
 
 func Connect(source string) (*Store, error) {
-	conn, err := pgx.Connect(context.Background(), source)
+	conn, err := pgxpool.New(context.Background(), source)
 	if err != nil {
 		return nil, err
 	}
@@ -32,6 +32,6 @@ func (store *Store) PingDB() error {
 	return store.conn.Ping(context.Background())
 }
 
-func (store *Store) Close() error {
-	return store.conn.Close(context.Background())
+func (store *Store) Close() {
+	store.conn.Close()
 }
