@@ -1,6 +1,6 @@
 -- Insert a user
 INSERT INTO users (name, email, weight, birth_date) 
-VALUES (name, 'johnny@example.com', 75, '2001-09-11');
+VALUES ('Johnny', 'johnny@example.com', 75, '2001-09-11');
 
 -- Insert challenges
 INSERT INTO challenges (name, steps, file_name, duration) 
