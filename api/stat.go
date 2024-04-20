@@ -14,7 +14,7 @@ type getStatRequest struct {
 type getStatListRequest struct {
 	Offset int32 `form:"offset"`
 	Limit  int32 `form:"limit" binding:"required,min=1,max=20"`
-	UserID int32 `form:"user_id" binding:"required`
+	UserID int32 `form:"user_id" binding:"required"`
 }
 
 type createStatRequest struct {
