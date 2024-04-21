@@ -330,9 +330,10 @@ func (q *Queries) ListStats(ctx context.Context, arg ListStatsParams) ([]Stat, e
 }
 
 const listStatsByChallenge = `-- name: ListStatsByChallenge :many
-SELECT id, calories_burned, rpm, duration, score, created_at, challenge_id, user_id FROM stats
-WHERE challenge_id = $1
-ORDER BY created_at DESC
+SELECT s.id, s.calories_burned, s.rpm, s.duration, s.score, s.created_at, s.challenge_id, s.user_id, u.name FROM stats as s
+INNER JOIN users as u ON u.id = s.user_id
+WHERE s.challenge_id = $1
+ORDER BY s.score DESC
 LIMIT $2
 OFFSET $3
 `
@@ -343,15 +344,27 @@ type ListStatsByChallengeParams struct {
 	Offset      int32 `json:"offset"`
 }
 
-func (q *Queries) ListStatsByChallenge(ctx context.Context, arg ListStatsByChallengeParams) ([]Stat, error) {
+type ListStatsByChallengeRow struct {
+	ID             int32            `json:"id"`
+	CaloriesBurned int32            `json:"calories_burned"`
+	Rpm            float32          `json:"rpm"`
+	Duration       int32            `json:"duration"`
+	Score          float32          `json:"score"`
+	CreatedAt      pgtype.Timestamp `json:"created_at"`
+	ChallengeID    int32            `json:"challenge_id"`
+	UserID         int32            `json:"user_id"`
+	Name           string           `json:"name"`
+}
+
+func (q *Queries) ListStatsByChallenge(ctx context.Context, arg ListStatsByChallengeParams) ([]ListStatsByChallengeRow, error) {
 	rows, err := q.db.Query(ctx, listStatsByChallenge, arg.ChallengeID, arg.Limit, arg.Offset)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Stat
+	var items []ListStatsByChallengeRow
 	for rows.Next() {
-		var i Stat
+		var i ListStatsByChallengeRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.CaloriesBurned,
@@ -361,6 +374,7 @@ func (q *Queries) ListStatsByChallenge(ctx context.Context, arg ListStatsByChall
 			&i.CreatedAt,
 			&i.ChallengeID,
 			&i.UserID,
+			&i.Name,
 		); err != nil {
 			return nil, err
 		}

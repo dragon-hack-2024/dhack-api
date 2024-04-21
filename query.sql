@@ -101,8 +101,9 @@ LIMIT $2
 OFFSET $3;
 
 -- name: ListStatsByChallenge :many
-SELECT * FROM stats
-WHERE challenge_id = $1
-ORDER BY created_at DESC
+SELECT s.*, u.name FROM stats as s
+INNER JOIN users as u ON u.id = s.user_id
+WHERE s.challenge_id = $1
+ORDER BY s.score DESC
 LIMIT $2
 OFFSET $3;
