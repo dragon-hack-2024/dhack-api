@@ -329,6 +329,49 @@ func (q *Queries) ListStats(ctx context.Context, arg ListStatsParams) ([]Stat, e
 	return items, nil
 }
 
+const listStatsByChallenge = `-- name: ListStatsByChallenge :many
+SELECT id, calories_burned, rpm, duration, score, created_at, challenge_id, user_id FROM stats
+WHERE challenge_id = $1
+ORDER BY created_at DESC
+LIMIT $2
+OFFSET $3
+`
+
+type ListStatsByChallengeParams struct {
+	ChallengeID int32 `json:"challenge_id"`
+	Limit       int32 `json:"limit"`
+	Offset      int32 `json:"offset"`
+}
+
+func (q *Queries) ListStatsByChallenge(ctx context.Context, arg ListStatsByChallengeParams) ([]Stat, error) {
+	rows, err := q.db.Query(ctx, listStatsByChallenge, arg.ChallengeID, arg.Limit, arg.Offset)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Stat
+	for rows.Next() {
+		var i Stat
+		if err := rows.Scan(
+			&i.ID,
+			&i.CaloriesBurned,
+			&i.Rpm,
+			&i.Duration,
+			&i.Score,
+			&i.CreatedAt,
+			&i.ChallengeID,
+			&i.UserID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listStatsByUser = `-- name: ListStatsByUser :many
 SELECT id, calories_burned, rpm, duration, score, created_at, challenge_id, user_id FROM stats
 WHERE user_id = $1

@@ -17,6 +17,12 @@ type getStatListRequest struct {
 	UserID int32 `form:"user_id" binding:"required"`
 }
 
+type getStatListByChallengeRequest struct {
+	Offset      int32 `form:"offset"`
+	Limit       int32 `form:"limit" binding:"required,min=1,max=20"`
+	ChallengeID int32 `form:"challenge_id" binding:"required"`
+}
+
 type createStatRequest struct {
 	CaloriesBurned int32   `json:"calories_burned" binding:"required"`
 	Rpm            float32 `json:"rpm" binding:"required"`
@@ -74,6 +80,33 @@ func (server *Server) GetStatListByUser(ctx *gin.Context) {
 
 	// Execute query.
 	result, err := server.store.Queries.ListStatsByUser(ctx, arg)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	ctx.JSON(http.StatusOK, result)
+}
+
+func (server *Server) GetStatListByChallenge(ctx *gin.Context) {
+
+	// Check if request has parameters offset and limit for pagination.
+	var req getStatListByChallengeRequest
+	if err := ctx.ShouldBindQuery(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		ctx.Abort()
+		return
+	}
+
+	arg := model.ListStatsByChallengeParams{
+		Offset:      req.Offset,
+		Limit:       req.Limit,
+		ChallengeID: req.ChallengeID,
+	}
+
+	// Execute query.
+	result, err := server.store.Queries.ListStatsByChallenge(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"message": err.Error()})
 		ctx.Abort()
