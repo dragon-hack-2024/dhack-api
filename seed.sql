@@ -7,10 +7,10 @@ VALUES  ('Johnny', 'johnny@example.com', 75, 180, '2001-09-11'),
 -- Insert challenges
 INSERT INTO challenges (name, steps, file_name, duration) 
 VALUES 
-  ('Jump Rope Hero', '[{"bpm":120,"time":10},{"bpm":150,"time":10},{"bpm":120,"time":10}]', 'advanced.mp3', 30),
-  ('Beginner Challenge', '[{"bpm":60,"time":10},{"bpm":75,"time":20}]', 'beginner.mp3', 65),
+  ('Beat Bounce', '[{"bpm":115,"time":10},{"bpm":150,"time":10},{"bpm":96,"time":10}]', 'advanced.mp3', 30),
+  ('Stairway to Exhaustion', '[{"bpm":130,"time":10},{"bpm":150,"time":20}]', 'beginner.mp3', 130),
   ('Marathon', '[{"bpm":80,"time":15},{"bpm":100,"time":25}]', 'intermediate.mp3', 320),
-  ('Expert Challenge', '[{"bpm":140,"time":25},{"bpm":160,"time":35}]', 'expert.mp3', 125);
+  ('Casual', '[{"bpm":120,"time":25},{"bpm":100,"time":35}]', 'expert.mp3', 125);
 
 -- Insert stats for past week with hard-coded values and day subtraction
 INSERT INTO stats (calories_burned, rpm, duration, score, created_at, challenge_id, user_id)
