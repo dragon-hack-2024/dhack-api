@@ -24,21 +24,21 @@ type getStatListByChallengeRequest struct {
 }
 
 type createStatRequest struct {
-	CaloriesBurned int32   `json:"calories_burned" binding:"required"`
-	Rpm            float32 `json:"rpm" binding:"required"`
-	Duration       int32   `json:"duration" binding:"required"`
-	Score          float32 `json:"score" binding:"required"`
-	ChallengeID    int32   `json:"challenge_id" binding:"required"`
-	UserID         int32   `json:"user_id" binding:"required"`
+	CaloriesBurned int32   `json:"calories_burned"`
+	Rpm            float32 `json:"rpm"`
+	Duration       int32   `json:"duration"`
+	Score          float32 `json:"score"`
+	ChallengeID    int32   `json:"challenge_id"`
+	UserID         int32   `json:"user_id"`
 }
 
 type updateStatRequest struct {
-	CaloriesBurned int32   `json:"calories_burned" binding:"required"`
-	Rpm            float32 `json:"rpm" binding:"required"`
-	Duration       int32   `json:"duration" binding:"required"`
-	Score          float32 `json:"score" binding:"required"`
-	ChallengeID    int32   `json:"challenge_id" binding:"required"`
-	UserID         int32   `json:"user_id" binding:"required"`
+	CaloriesBurned int32   `json:"calories_burned"`
+	Rpm            float32 `json:"rpm"`
+	Duration       int32   `json:"duration"`
+	Score          float32 `json:"score"`
+	ChallengeID    int32   `json:"challenge_id"`
+	UserID         int32   `json:"user_id"`
 }
 
 func (server *Server) GetStatByID(ctx *gin.Context) {
